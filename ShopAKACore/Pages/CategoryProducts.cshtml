@@ -1,0 +1,33 @@
+@page "{id:int}"
+@model ShopAKA.Pages.CategoryProductsModel
+@{
+    ViewData["Title"] = Model.CategoryName;
+}
+<div class="py-4">
+    <div class="text-center mb-4">
+        <h2 class="section-title"><i class="fas fa-box me-2"></i>@Model.CategoryName</h2>
+    </div>
+    <div class="row">
+        @foreach (var p in Model.Products)
+        {
+            @await Html.PartialAsync("_ProductCard", p)
+        }
+    </div>
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="mt-4"><ul class="pagination justify-content-center">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item"><a class="page-link" asp-page="/CategoryProducts" asp-route-id="@Model.CategoryId" asp-route-page="@(Model.CurrentPage - 1)">Trước</a></li>
+            }
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")"><a class="page-link" asp-page="/CategoryProducts" asp-route-id="@Model.CategoryId" asp-route-page="@i">@i</a></li>
+            }
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <li class="page-item"><a class="page-link" asp-page="/CategoryProducts" asp-route-id="@Model.CategoryId" asp-route-page="@(Model.CurrentPage + 1)">Sau</a></li>
+            }
+        </ul></nav>
+    }
+</div>

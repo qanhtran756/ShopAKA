@@ -1,0 +1,52 @@
+@page
+@model ShopAKA.Pages.Admin.Categories.IndexModel
+@{
+    ViewData["Title"] = "Quản lý danh mục";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/categories.css" />
+}
+
+<div class="category-header">
+    <h2><i class="fa fa-list"></i> Quản lý danh mục</h2>
+    <a asp-page="Create" class="btn-create">+ Tạo mới</a>
+</div>
+
+@if (TempData["Error"] != null) { <div class="alert alert-danger">@TempData["Error"]</div> }
+@if (TempData["Success"] != null) { <div class="alert alert-success">@TempData["Success"]</div> }
+
+<div class="category-table-container">
+    @if (Model.Categories.Any())
+    {
+        <table class="table category-table">
+            <thead>
+                <tr>
+                    <th>Tên danh mục</th>
+                    <th>Tổng số sản phẩm</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Categories)
+                {
+                    <tr>
+                        <td><span class="category-name">@item.CategoryName</span></td>
+                        <td><span class="product-count">@(item.Product?.Count ?? 0)</span></td>
+                        <td class="action-buttons">
+                            <a asp-page="Edit" asp-route-id="@item.CategoryID" class="btn-custom btn-edit">Sửa</a>
+                            <a asp-page="Delete" asp-route-id="@item.CategoryID" class="btn-custom btn-delete">Xóa</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="fa fa-inbox"></i>
+            <p>Chưa có danh mục nào</p>
+            <a asp-page="Create" class="btn-create">Tạo danh mục đầu tiên</a>
+        </div>
+    }
+</div>

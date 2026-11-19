@@ -1,0 +1,139 @@
+@page
+@model ShopAKA.Pages.IndexModel
+@{
+    ViewData["Title"] = "Trang Chủ";
+}
+
+<section id="home" class="hero-section">
+    <div class="hero-content">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-12 text-center">
+                    <h1 class="hero-title">Chào Mừng Đến Với ShopAKA</h1>
+                    <p class="hero-subtitle">Khám phá những sản phẩm chất lượng cao với giá cả hợp lý</p>
+                    <div class="hero-buttons">
+                        <button type="button" class="btn btn-primary btn-lg" onclick="scrollToProducts()">Mua Ngay</button>
+                        <button type="button" class="btn btn-outline-primary btn-lg" onclick="scrollToProducts()">Xem Thêm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features-section py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4"><div class="feature-card"><div class="feature-icon"><i class="fas fa-shipping-fast"></i></div><h4>Giao Hàng Nhanh</h4><p>Giao hàng miễn phí trong vòng 24h</p></div></div>
+            <div class="col-md-4 mb-4"><div class="feature-card"><div class="feature-icon"><i class="fas fa-shield-alt"></i></div><h4>Bảo Hành Chính Hãng</h4><p>Bảo hành 12 tháng cho tất cả sản phẩm</p></div></div>
+            <div class="col-md-4 mb-4"><div class="feature-card"><div class="feature-icon"><i class="fas fa-headset"></i></div><h4>Hỗ Trợ 24/7</h4><p>Đội ngũ chăm sóc khách hàng chuyên nghiệp</p></div></div>
+        </div>
+    </div>
+</section>
+
+<section id="products" class="products-section py-5 bg-light">
+    <div class="container">
+        <div class="row"><div class="col-12 text-center mb-5"><h2 class="section-title">Danh sách sản phẩm</h2><p class="section-subtitle">Sản phẩm được sắp xếp theo danh mục</p></div></div>
+        @foreach (var item in Model.CategoriesWithProducts)
+        {
+            <div class="product-category-section mb-5" id="category-@item.Category.CategoryID">
+                <h3 class="category-title text-center mb-4"><i class="fas fa-box me-2"></i>@item.Category.CategoryName</h3>
+                <div class="row">
+                    @if (item.Products.Any())
+                    {
+                        @foreach (var product in item.Products)
+                        {
+                            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                                <div class="product-card" data-product-id="@product.ProductID" data-product-name="@product.ProductName" data-product-price="@product.ProductPrice" data-product-stock="@product.StockQuantity">
+                                    <div class="product-image">
+                                        <img src="@(string.IsNullOrEmpty(product.ProductImage) ? "/images/no-image.jpg" : product.ProductImage)" alt="@product.ProductName" class="img-fluid" data-product-image="@product.ProductImage">
+                                        <div class="product-overlay">
+                                            <a asp-page="/ProductDetail" asp-route-id="@product.ProductID" class="btn btn-sm btn-outline-light"><i class="fas fa-eye"></i> Xem chi tiết</a>
+                                        </div>
+                                    </div>
+                                    <div class="product-info">
+                                        <h5 class="product-name">@product.ProductName</h5>
+                                        <p class="product-description">@(product.ProductDecription?.Length > 50 ? product.ProductDecription[..50] + "..." : product.ProductDecription)</p>
+                                        <div class="product-price-stock d-flex justify-content-between align-items-center">
+                                            <div class="product-price">@product.ProductPrice.ToString("N0")₫</div>
+                                            <small class="text-muted product-stock"><i class="fas fa-box"></i> Còn lại: @product.StockQuantity</small>
+                                        </div>
+                                        <div class="product-actions mt-3">
+                                            <button type="button" class="btn btn-sm btn-primary" onclick="buyNow(@product.ProductID)" data-product-id="@product.ProductID">
+                                                <i class="fas fa-shopping-cart"></i> Mua
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addToCart(@product.ProductID, true)" data-product-id="@product.ProductID">
+                                                <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else { <div class="col-12 text-center"><p class="text-muted">Chưa có sản phẩm trong danh mục này</p></div> }
+                </div>
+            </div>
+        }
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Page navigation"><ul class="pagination justify-content-center">
+                @if (Model.CurrentPage > 1)
+                {
+                    <li class="page-item"><a class="page-link" asp-page="/Index" asp-route-page="@(Model.CurrentPage - 1)">Trước</a></li>
+                }
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")"><a class="page-link" asp-page="/Index" asp-route-page="@i">@i</a></li>
+                }
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <li class="page-item"><a class="page-link" asp-page="/Index" asp-route-page="@(Model.CurrentPage + 1)">Sau</a></li>
+                }
+            </ul></nav>
+        }
+    </div>
+</section>
+
+<section class="py-4">
+    <div class="container">
+        <h4 class="text-center mb-4"><i class="fas fa-star text-warning"></i> Sản phẩm nổi bật (View Component)</h4>
+        @await Component.InvokeAsync("FeaturedProducts", new { count = 4 })
+    </div>
+</section>
+
+<section id="about" class="about-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="section-title">Về Chúng Tôi</h2>
+                <p class="about-text">ShopAKA là cửa hàng trực tuyến hàng đầu chuyên cung cấp các sản phẩm chất lượng cao với giá cả hợp lý. Với hơn 5 năm kinh nghiệm trong lĩnh vực thương mại điện tử, chúng tôi cam kết mang đến cho khách hàng những trải nghiệm mua sắm tốt nhất.</p>
+                <ul class="about-features list-unstyled">
+                    <li><i class="fas fa-check text-primary me-2"></i>Sản phẩm chính hãng 100%</li>
+                    <li><i class="fas fa-check text-primary me-2"></i>Giao hàng nhanh chóng</li>
+                    <li><i class="fas fa-check text-primary me-2"></i>Bảo hành uy tín</li>
+                </ul>
+            </div>
+            <div class="col-lg-6"><img src="~/images/aka_tt.jpg" alt="Về chúng tôi" class="img-fluid rounded-3 shadow" onerror="this.src='/images/shop.jpg'" /></div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="contact-section py-5 bg-light">
+    <div class="container">
+        <div class="row"><div class="col-12 text-center mb-5"><h2 class="section-title">Liên Hệ Với Chúng Tôi</h2><p class="section-subtitle">Chúng tôi luôn sẵn sàng hỗ trợ bạn</p></div></div>
+        <div class="row"><div class="col-lg-8 mx-auto"><div class="contact-form"><form><div class="row"><div class="col-md-6 mb-3"><input type="text" class="form-control" placeholder="Họ và tên" required /></div><div class="col-md-6 mb-3"><input type="email" class="form-control" placeholder="Email" required /></div></div><div class="mb-3"><input type="text" class="form-control" placeholder="Tiêu đề" /></div><div class="mb-3"><textarea class="form-control" rows="5" placeholder="Nội dung tin nhắn" required></textarea></div><div class="text-center"><button type="submit" class="btn btn-primary btn-lg">Gửi Tin Nhắn</button></div></form></div></div></div>
+    </div>
+</section>
+
+<footer class="footer bg-dark text-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4"><h5 class="footer-title"><i class="fas fa-store me-2"></i>ShopAKA</h5><p class="footer-text">Cửa hàng trực tuyến uy tín, cung cấp sản phẩm chất lượng cao với giá cả hợp lý và dịch vụ khách hàng chuyên nghiệp.</p><div class="social-links"><a href="#" class="social-link"><i class="fab fa-facebook"></i></a><a href="#" class="social-link"><i class="fab fa-twitter"></i></a><a href="#" class="social-link"><i class="fab fa-instagram"></i></a><a href="#" class="social-link"><i class="fab fa-youtube"></i></a></div></div>
+            <div class="col-lg-2 col-md-6 mb-4"><h6 class="footer-subtitle">Sản Phẩm</h6><ul class="footer-links list-unstyled"><li><a href="#">Điện Thoại</a></li><li><a href="#">Laptop</a></li><li><a href="#">Phụ Kiện</a></li><li><a href="#">Đồng Hồ</a></li></ul></div>
+            <div class="col-lg-2 col-md-6 mb-4"><h6 class="footer-subtitle">Hỗ Trợ</h6><ul class="footer-links list-unstyled"><li><a href="#">Trung Tâm Trợ Giúp</a></li><li><a href="#">Chính Sách Bảo Hành</a></li><li><a href="#">Chính Sách Đổi Trả</a></li><li><a href="#">Liên Hệ</a></li></ul></div>
+            <div class="col-lg-4 mb-4"><h6 class="footer-subtitle">Thông Tin Liên Hệ</h6><div class="contact-info"><p><i class="fas fa-map-marker-alt me-2"></i>Ở đâu còn lâu mới nói</p><p><i class="fas fa-phone me-2"></i>+84 5678910JQK</p><p><i class="fas fa-envelope me-2"></i>shopaka@gmail.com</p></div></div>
+        </div>
+        <hr class="my-4"><div class="text-center"><p class="mb-0">&copy; 2025 ShopAKA. Tất cả quyền được bảo lưu.</p></div>
+    </div>
+</footer>

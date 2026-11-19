@@ -1,0 +1,40 @@
+@using System.Net.Http.Json
+@inject HttpClient Http
+@implements IDisposable
+
+<span class="badge bg-danger position-absolute top-0 start-100 translate-middle" style="@(count > 0 ? "" : "display:none")">@count</span>
+
+@code {
+    private int count;
+    private System.Threading.Timer? _timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshAsync();
+        _timer = new System.Threading.Timer(async _ =>
+        {
+            await RefreshAsync();
+            await InvokeAsync(StateHasChanged);
+        }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+    }
+
+    private async Task RefreshAsync()
+    {
+        try
+        {
+            var result = await Http.GetFromJsonAsync<CartCountResponse>("api/cart/count");
+            count = result?.count ?? 0;
+        }
+        catch
+        {
+            count = 0;
+        }
+    }
+
+    public void Dispose() => _timer?.Dispose();
+
+    private class CartCountResponse
+    {
+        public int count { get; set; }
+    }
+}

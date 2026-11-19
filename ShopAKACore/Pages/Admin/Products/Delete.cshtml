@@ -1,0 +1,16 @@
+@page "{id:int}"
+@model ShopAKA.Pages.Admin.Products.DeleteModel
+@{
+    ViewData["Title"] = "Xóa sản phẩm";
+    var hasOrders = Model.Product!.OrderDetail.Any();
+}
+<h2>Xóa @Model.Product!.ProductName?</h2>
+@if (hasOrders)
+{
+    <div class="alert alert-danger">Sản phẩm có @Model.Product.OrderDetail.Count đơn hàng liên quan. Không thể xóa.</div>
+}
+<p>Đơn hàng liên quan: @Model.Product.OrderDetail.Count</p>
+<form method="post">
+    <button type="submit" class="btn btn-danger" disabled="@hasOrders">Xóa</button>
+    <a asp-page="Index" class="btn btn-secondary">Hủy</a>
+</form>

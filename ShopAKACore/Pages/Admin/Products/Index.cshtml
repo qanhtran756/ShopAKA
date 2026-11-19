@@ -1,0 +1,27 @@
+@page
+@model ShopAKA.Pages.Admin.Products.IndexModel
+@{ ViewData["Title"] = "Quản lý sản phẩm"; }
+<div class="d-flex justify-content-between mb-3">
+    <h2><i class="fa fa-box"></i> Quản lý sản phẩm</h2>
+    <a asp-page="Create" class="btn btn-primary">+ Thêm sản phẩm</a>
+</div>
+@if (TempData["Error"] != null) { <div class="alert alert-danger">@TempData["Error"]</div> }
+<table class="table table-bordered table-sm">
+    <thead><tr><th>Ảnh</th><th>Tên</th><th>Danh mục</th><th>Giá</th><th>Tồn</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var p in Model.Products)
+    {
+        <tr>
+            <td><img src="@(p.ProductImage ?? "/images/shop.jpg")" width="50" /></td>
+            <td>@p.ProductName</td>
+            <td>@p.Category?.CategoryName</td>
+            <td>@p.ProductPrice.ToString("N0")₫</td>
+            <td>@p.StockQuantity</td>
+            <td>
+                <a asp-page="Edit" asp-route-id="@p.ProductID" class="btn btn-sm btn-warning">Sửa</a>
+                <a asp-page="Delete" asp-route-id="@p.ProductID" class="btn btn-sm btn-danger">Xóa</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

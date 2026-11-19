@@ -1,0 +1,17 @@
+@page "{id:int}"
+@model ShopAKA.Pages.Admin.Categories.DeleteModel
+@{
+    ViewData["Title"] = "Xóa danh mục";
+    var hasProducts = Model.Category!.Product?.Any() == true;
+}
+<h2>Xóa danh mục</h2>
+@if (hasProducts)
+{
+    <div class="alert alert-danger">Danh mục này có @(Model.Category.Product?.Count ?? 0) sản phẩm liên quan. Không thể xóa.</div>
+}
+<p>Bạn có chắc muốn xóa <strong>@Model.Category!.CategoryName</strong>?</p>
+<p>Số sản phẩm liên quan: @(Model.Category.Product?.Count ?? 0)</p>
+<form method="post">
+    <button type="submit" class="btn btn-danger" disabled="@hasProducts">Xóa</button>
+    <a asp-page="Index" class="btn btn-secondary">Hủy</a>
+</form>

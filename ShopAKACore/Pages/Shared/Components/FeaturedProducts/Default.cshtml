@@ -1,0 +1,28 @@
+@model IEnumerable<ShopAKA.Models.Product>
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="product-card" data-product-id="@product.ProductID" data-product-name="@product.ProductName" data-product-price="@product.ProductPrice" data-product-stock="@product.StockQuantity">
+                    <div class="product-image">
+                        <img src="@(string.IsNullOrEmpty(product.ProductImage) ? "/images/no-image.jpg" : product.ProductImage)" alt="@product.ProductName" class="img-fluid" data-product-image="@product.ProductImage">
+                        <div class="product-overlay">
+                            <a asp-page="/ProductDetail" asp-route-id="@product.ProductID" class="btn btn-sm btn-outline-light"><i class="fas fa-eye"></i> Xem chi tiết</a>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h5 class="product-name">@product.ProductName</h5>
+                        <div class="product-price">@product.ProductPrice.ToString("N0")₫</div>
+                        <small class="text-muted"><i class="fas fa-box"></i> Còn lại: @product.StockQuantity</small>
+                        <div class="product-actions mt-3">
+                            <button type="button" class="btn btn-sm btn-primary" onclick="buyNow(@product.ProductID)"><i class="fas fa-shopping-cart"></i> Mua</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addToCart(@product.ProductID, true)"><i class="fas fa-cart-plus"></i> Thêm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

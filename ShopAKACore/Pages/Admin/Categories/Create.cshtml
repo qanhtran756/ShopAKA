@@ -1,0 +1,15 @@
+@page
+@model ShopAKA.Pages.Admin.Categories.CreateModel
+@{
+    ViewData["Title"] = "Tạo danh mục";
+}
+<h2>Tạo danh mục mới</h2>
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="Category.CategoryName" class="form-label"></label>
+        <input asp-for="Category.CategoryName" class="form-control" />
+        <span asp-validation-for="Category.CategoryName" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <a asp-page="Index" class="btn btn-secondary">Hủy</a>
+</form>

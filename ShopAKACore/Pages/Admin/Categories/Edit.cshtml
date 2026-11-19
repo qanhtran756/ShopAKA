@@ -1,0 +1,16 @@
+@page "{id:int}"
+@model ShopAKA.Pages.Admin.Categories.EditModel
+@{
+    ViewData["Title"] = "Sửa danh mục";
+}
+<h2>Sửa danh mục</h2>
+<form method="post">
+    <input type="hidden" asp-for="Category.CategoryID" />
+    <div class="mb-3">
+        <label asp-for="Category.CategoryName" class="form-label"></label>
+        <input asp-for="Category.CategoryName" class="form-control" />
+        <span asp-validation-for="Category.CategoryName" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+    <a asp-page="Index" class="btn btn-secondary">Hủy</a>
+</form>

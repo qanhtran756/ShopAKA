@@ -1,0 +1,10 @@
+@page "{id:int}"
+@model ShopAKA.Pages.Admin.Orders.DetailsModel
+@{ ViewData["Title"] = "Chi tiết đơn hàng"; }
+<h2>Đơn hàng #@Model.Order!.OrderID</h2>
+<p>Khách: @Model.Order.Customer?.CustomerName | @Model.Order.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+<p>Địa chỉ: @Model.Order.AddressDelivery</p>
+<table class="table"><thead><tr><th>SP</th><th>SL</th><th>Đơn giá</th></tr></thead>
+<tbody>@foreach (var d in Model.Order.OrderDetail){<tr><td>@d.Product?.ProductName</td><td>@d.Quantity</td><td>@d.UnitPrice.ToString("N0")₫</td></tr>}</tbody></table>
+<p class="fw-bold">Tổng: @Model.Order.TotalAmount.ToString("N0")₫</p>
+<a asp-page="Index" class="btn btn-secondary">Quay lại</a>

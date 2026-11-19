@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ShopAKA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" />
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <div class="container">
+                <a class="navbar-brand fw-bold" asp-page="/Index">
+                    <i class="fas fa-store me-2"></i>ShopAKA
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item"><a class="nav-link active" asp-page="/Index">Trang Chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#products">Sản Phẩm</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#about">Giới Thiệu</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#contact">Liên Hệ</a></li>
+                    </ul>
+                    <div class="d-flex align-items-center flex-wrap">
+                        <div class="search-box me-3" style="min-width:260px">
+                            @(await Html.RenderComponentAsync<ShopAKA.Components.ProductSearch>(Microsoft.AspNetCore.Mvc.Rendering.RenderMode.Server))
+                        </div>
+                        <a asp-page="/Cart" class="btn btn-outline-light me-2 position-relative nav-icon-btn">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span id="cartBadge" class="badge bg-danger position-absolute top-0 start-100 translate-middle" style="display:none">0</span>
+                        </a>
+                        @if (Context.Session.GetString("AdminUsername") != null)
+                        {
+                            <a asp-page="/Admin/Categories/Index" class="btn btn-warning me-2"><i class="fas fa-cog me-1"></i>Quản trị</a>
+                        }
+                        else if (Context.Session.GetInt32("CustomerID") != null)
+                        {
+                            <div class="dropdown">
+                                <button class="btn btn-outline-light dropdown-toggle nav-icon-btn" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user-circle me-2"></i>@(Context.Session.GetString("CustomerName") ?? Context.Session.GetString("Username"))
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" asp-page="/OrderHistory"><i class="fas fa-history me-2"></i>Lịch sử giao dịch</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Profile"><i class="fas fa-user me-2"></i>Hồ sơ khách hàng</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" asp-page="/Logout"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <a asp-page="/Login" class="btn btn-outline-light me-2"><i class="fas fa-sign-in-alt me-1"></i>Đăng nhập</a>
+                            <a asp-page="/Register" class="btn btn-light"><i class="fas fa-user-plus me-1"></i>Đăng ký</a>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="category-navbar py-2">
+                <div class="container">
+                    @await Component.InvokeAsync("CategoryMenu")
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    <div class="modal fade" id="loginRequiredModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body text-center px-4 pb-4">
+                    <i class="fas fa-user-lock" style="font-size:64px;color:#0d6efd"></i>
+                    <h5 class="mt-3">Vui lòng đăng nhập để tiếp tục</h5>
+                    <a asp-page="/Login" class="btn btn-primary btn-lg mt-3"><i class="fas fa-sign-in-alt me-2"></i>Đăng nhập</a>
+                    <p class="mt-3 mb-0">Chưa có tài khoản? <a asp-page="/Register">Đăng ký ngay</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>window.isUserLoggedIn = @(Context.Session.GetInt32("CustomerID") != null ? "true" : "false");</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="_framework/blazor.server.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

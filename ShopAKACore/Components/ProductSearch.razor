@@ -1,0 +1,79 @@
+@using System.Net.Http.Json
+@using ShopAKA.Models
+@inject HttpClient Http
+
+<div class="product-search-blazor d-flex gap-2">
+    <input class="form-control" @bind="SearchQuery" @bind:event="oninput" placeholder="Tìm kiếm sản phẩm (Blazor)..." />
+    <button class="btn btn-outline-primary" @onclick="SearchAsync" disabled="@isSearching">
+        @if (isSearching) { <span>...</span> } else { <i class="fas fa-search"></i> }
+    </button>
+</div>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <small class="text-muted d-block mt-1">@message</small>
+}
+
+@if (results.Any())
+{
+    <ul class="list-group mt-2 shadow-sm" style="max-height:220px;overflow:auto;">
+        @foreach (var item in results)
+        {
+            <li class="list-group-item list-group-item-action py-2">
+                <a href="/ProductDetail/@item.ProductID" class="text-decoration-none text-dark d-flex justify-content-between">
+                    <span>@item.ProductName</span>
+                    <strong class="text-primary">@item.ProductPrice.ToString("N0")₫</strong>
+                </a>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private string SearchQuery { get; set; } = "";
+    private string message = "";
+    private bool isSearching;
+    private List<ProductSearchResult> results = new();
+
+    private async Task SearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(SearchQuery))
+        {
+            message = "Nhập từ khóa để tìm kiếm";
+            results.Clear();
+            return;
+        }
+
+        isSearching = true;
+        message = "Đang tìm qua Web API...";
+        try
+        {
+            var response = await Http.GetFromJsonAsync<SearchApiResponse>(
+                $"api/products/search?query={Uri.EscapeDataString(SearchQuery)}&pageSize=5");
+            results = response?.items?.ToList() ?? new List<ProductSearchResult>();
+            message = results.Any() ? $"Tìm thấy {response?.total ?? 0} sản phẩm" : "Không có kết quả";
+        }
+        catch
+        {
+            message = "Không thể gọi API";
+            results.Clear();
+        }
+        finally
+        {
+            isSearching = false;
+        }
+    }
+
+    private class SearchApiResponse
+    {
+        public int total { get; set; }
+        public List<ProductSearchResult>? items { get; set; }
+    }
+
+    private class ProductSearchResult
+    {
+        public int ProductID { get; set; }
+        public string ProductName { get; set; } = "";
+        public decimal ProductPrice { get; set; }
+    }
+}

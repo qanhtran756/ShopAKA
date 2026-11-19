@@ -1,0 +1,11 @@
+@model IEnumerable<ShopAKA.Models.Category>
+<nav class="category-nav">
+    <ul class="category-list">
+        @foreach (var category in Model)
+        {
+            <li>
+                <a asp-page="/CategoryProducts" asp-route-id="@category.CategoryID" class="category-link">@category.CategoryName</a>
+            </li>
+        }
+    </ul>
+</nav>

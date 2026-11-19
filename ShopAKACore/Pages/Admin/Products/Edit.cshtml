@@ -1,0 +1,19 @@
+@page "{id:int}"
+@model ShopAKA.Pages.Admin.Products.EditModel
+@{ ViewData["Title"] = "Sửa sản phẩm"; }
+<h2>Sửa sản phẩm</h2>
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Product.ProductID" />
+    <div class="mb-3">
+        <label asp-for="Product.CategoryID" class="form-label">Danh mục</label>
+        <select asp-for="Product.CategoryID" asp-items="Model.CategoryList" class="form-select"></select>
+    </div>
+    <div class="mb-3"><label asp-for="Product.ProductName" class="form-label"></label><input asp-for="Product.ProductName" class="form-control" /></div>
+    <div class="mb-3"><label asp-for="Product.ProductDecription" class="form-label"></label><textarea asp-for="Product.ProductDecription" class="form-control"></textarea></div>
+    <div class="mb-3"><label asp-for="Product.ProductPrice" class="form-label"></label><input asp-for="Product.ProductPrice" class="form-control" /></div>
+    <div class="mb-3"><label asp-for="Product.StockQuantity" class="form-label"></label><input asp-for="Product.StockQuantity" class="form-control" /></div>
+    <div class="mb-3"><label asp-for="ImageFile" class="form-label">Ảnh mới (tùy chọn)</label><input asp-for="ImageFile" type="file" class="form-control" accept="image/*" /></div>
+    @if (!string.IsNullOrEmpty(Model.Product.ProductImage)) { <img src="@Model.Product.ProductImage" width="100" class="mb-3" /> }
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+    <a asp-page="Index" class="btn btn-secondary">Hủy</a>
+</form>

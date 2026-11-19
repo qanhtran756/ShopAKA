@@ -1,0 +1,9 @@
+@page
+@model ShopAKA.Pages.Admin.Users.IndexModel
+@{ ViewData["Title"] = "Người dùng admin"; }
+<div class="d-flex justify-content-between mb-3">
+    <h2>Quản lý admin</h2>
+    <a asp-page="Create" class="btn btn-primary">+ Thêm admin</a>
+</div>
+<table class="table"><thead><tr><th>Username</th><th>Role</th></tr></thead>
+<tbody>@foreach (var u in Model.Users){<tr><td>@u.Username</td><td>Admin</td></tr>}</tbody></table>
